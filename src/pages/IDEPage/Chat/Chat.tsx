@@ -46,7 +46,6 @@ const data: Message[] = [
 ]
 
 const BASE_URI: string = 'ws://localhost:8080'
-const username = useAppSelector(selectId)
 
 interface Message {
   messageType: 'TALK' | 'ENTER' | 'EXIT'
@@ -62,6 +61,7 @@ interface BubbleProps {
   message: string
   senderName: string
   isHighlighted: boolean
+  username: string
 }
 
 const Bubble: React.FC<BubbleProps> = ({
@@ -69,6 +69,7 @@ const Bubble: React.FC<BubbleProps> = ({
   message,
   senderName,
   isHighlighted,
+  username,
 }) => {
   if (messageType === 'ENTER' || messageType === 'EXIT') {
     return (
@@ -129,6 +130,8 @@ const Chat = ({ workspaceId }: { workspaceId: number }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [highlightedIndices, setHighlightedIndices] = useState<number[]>([])
   const messageRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const username = useAppSelector(selectId)
 
   // WebSocket
   useEffect(() => {
@@ -308,6 +311,7 @@ const Chat = ({ workspaceId }: { workspaceId: number }) => {
                 message={msg.message}
                 senderName={msg.senderName}
                 isHighlighted={highlightedIndices.includes(index)}
+                username={username}
               />
             </Flex>
           ))
