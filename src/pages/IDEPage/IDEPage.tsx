@@ -137,7 +137,7 @@ const IDEPage = () => {
 
         {/* SECTION 채팅창 영역 */}
         <Box display={showChatting ? 'block' : 'none'}>
-          <Chat />
+          <Chat workspaceId={Number(containerId)} />
         </Box>
       </Flex>
     </>

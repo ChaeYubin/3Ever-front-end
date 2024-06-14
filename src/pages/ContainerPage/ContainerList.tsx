@@ -15,8 +15,6 @@ import {
   Spacer,
 } from '@chakra-ui/react'
 import Modal from '@/components/Modal'
-import public_container from '@/data/public-container-list.json'
-import private_container from '@/data/private-container-list.json'
 import ContainerItem from './ContainerItem'
 import { useEffect, useState } from 'react'
 import { createContainer, getContainer } from '@/services/container'
@@ -27,9 +25,6 @@ interface Props {
 }
 
 const ContainerList = ({ category }: Props) => {
-  const tempPrivateContainerList = private_container
-  const tempPublicContainerList = public_container
-
   const [containerList, setContainerList] = useState<Container[] | null>(null)
 
   useEffect(() => {

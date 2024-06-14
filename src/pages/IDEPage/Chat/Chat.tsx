@@ -13,6 +13,8 @@ import {
 import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import { StompConfig, Client, IMessage } from '@stomp/stompjs'
 import send from '../../../assets/images/send.png'
+import { useAppSelector } from '@/hooks'
+import { selectId } from '@/store/userSlice'
 
 // 테스트 데이터
 const data: Message[] = [
@@ -44,8 +46,7 @@ const data: Message[] = [
 ]
 
 const BASE_URI: string = 'ws://localhost:8080'
-const workspaceId: number = 1 // props로 값 받을 예정
-const username: string = 'me' // 상태관리 store에서 값 가져올 예정, 나중에 프로필 이미지도 받아오기.
+const username = useAppSelector(selectId)
 
 interface Message {
   messageType: 'TALK' | 'ENTER' | 'EXIT'
@@ -120,7 +121,7 @@ const Bubble: React.FC<BubbleProps> = ({
   )
 }
 
-const Chat: React.FC = () => {
+const Chat = ({ workspaceId }: { workspaceId: number }) => {
   const [messages, setMessages] = useState<Message[]>(data)
   const [inputMessage, setInputMessage] = useState('')
   const [isConnected, setIsConnected] = useState(false)
