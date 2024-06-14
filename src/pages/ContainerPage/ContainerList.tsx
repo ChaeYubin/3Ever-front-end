@@ -30,11 +30,7 @@ const ContainerList = ({ category }: Props) => {
   const tempPrivateContainerList = private_container
   const tempPublicContainerList = public_container
 
-  // TODO - 서버와 연동 후 주석 삭제
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  // @ts-ignore
   const [containerList, setContainerList] = useState<Container[] | null>(null)
-  /* eslint-disable @typescript-eslint/no-unused-vars */
 
   useEffect(() => {
     const CATEGORY: { [key: string]: string } = {
@@ -149,7 +145,7 @@ const ContainerList = ({ category }: Props) => {
             templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
           >
             {category === '내 컨테이너'
-              ? tempPrivateContainerList.map(container => (
+              ? containerList!.map(container => (
                   <ContainerItem
                     key={container.id}
                     category={category}
@@ -159,7 +155,7 @@ const ContainerList = ({ category }: Props) => {
                     description={container.description}
                   />
                 ))
-              : tempPublicContainerList.map(container => (
+              : containerList!.map(container => (
                   <ContainerItem
                     key={container.id}
                     category={category}

@@ -26,8 +26,6 @@ import {
 import PermissionSettings from './TabItem/PermissionSettings.tsx'
 import { flattenTree } from 'react-accessible-treeview'
 import { Tree, nodeMetadata } from '@/models/entry.ts'
-// NOTE - 테스트용 파일 리스트
-import entries from '@/data/file-system-entry.json'
 import Chat from './Chat/Chat.tsx'
 
 const IDEPage = () => {
@@ -48,13 +46,6 @@ const IDEPage = () => {
     // NOTE - 상태 추적 변수: 로딩 중 컴포넌트가 언마운트되면 요청을 중단한다.
     let isCancelled = false
 
-    // TODO - 테스트용 코드
-    const tree = flattenTree<nodeMetadata>(entries as any)
-    dispatch(setTree(tree as Tree))
-
-    // TODO - 서버와 연동 후 주석 삭제
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    // @ts-ignore
     const startContainerRequest = async () => {
       setIsLoading(true) // 로딩 시작
 
@@ -74,8 +65,7 @@ const IDEPage = () => {
 
     setIsLoading(false)
 
-    // TODO - 서버와 연동 후 주석 삭제
-    // startContainerRequest()
+    startContainerRequest()
 
     return () => {
       isCancelled = true
