@@ -122,12 +122,12 @@ const LoginPage: React.FC = () => {
             </AbsoluteCenter>
           </Box>
           <Flex flexDir="column" w="full" gap={3}>
-            <a href="/api/oauth2/authorization/kakao">
+            <a href="http://localhost:8080/api/oauth2/authorization/kakao">
               <Button bg="yellow.300" _hover={{ bg: 'yellow.400' }} w="full">
                 카카오계정으로 로그인
               </Button>
             </a>
-            <a href="/api/oauth2/authorization/naver">
+            <a href="http://localhost:8080/api/oauth2/authorization/naver">
               <Button
                 bg="green.400"
                 color="white"
@@ -137,7 +137,7 @@ const LoginPage: React.FC = () => {
                 네이버로 로그인
               </Button>
             </a>
-            <a href="/api/oauth2/authorization/google">
+            <a href="http://localhost:8080/api/oauth2/authorization/google">
               <Button colorScheme="gray" w="full">
                 구글로 로그인
               </Button>

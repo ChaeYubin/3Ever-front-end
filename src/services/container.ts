@@ -52,13 +52,19 @@ export async function startContainer(
   }
 }
 
+// NOTE - 테스트용
+interface Response {
+  result: Container[]
+  message: string
+}
+
 /** 컨테이너 조회 API */
 export async function getContainer(
   category: string
-): Promise<ApiResponse<Container[]>> {
+): Promise<ApiResponse<Response>> {
   try {
-    const response: AxiosResponse<Container[]> = await API.get(
-      `/api/workspace/${category}`
+    const response: AxiosResponse<Response> = await API.get(
+      `/api/workspaces/${category}/get`
     )
 
     return {

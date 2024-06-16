@@ -12,8 +12,8 @@ import './code-editor.css'
 import { LanguageSupport } from '@codemirror/language'
 import { showMinimap } from '@replit/codemirror-minimap'
 import yorkie, { type Text } from 'yorkie-js-sdk'
-import { useAppSelector } from '@/hooks'
-import { selectSelectedNode } from '@/store/ideSlice'
+import { useAppDispatch, useAppSelector } from '@/hooks'
+import { selectSelectedNode, setSelectedNode } from '@/store/ideSlice'
 
 type YorkieDoc = {
   content: Text
@@ -35,6 +35,10 @@ const CodeEditor = ({
 }) => {
   const editorRef = useRef<HTMLDivElement>(null)
   const codemirrorViewRef = useRef<EditorView>()
+
+  const dispatch = useAppDispatch()
+  const selectedNode = useAppSelector(selectSelectedNode)
+  const metadata = selectedNode.metadata
 
   const currentFileId = useAppSelector(selectSelectedNode).id
   const currentFileContent =
@@ -78,6 +82,7 @@ const CodeEditor = ({
     // 문서 내용을 CodeMirror 에디터에 동기화
     const syncText = () => {
       const text = doc.getRoot().content
+
       codemirrorViewRef.current?.dispatch({
         changes: {
           from: 0,
@@ -114,6 +119,18 @@ const CodeEditor = ({
               root.content.edit(fromA + adj, toA + adj, insertText)
             }, `update content byA ${client.getID()}`)
             adj += insertText.length - (toA - fromA)
+
+            doc.update(root => {
+              dispatch(
+                setSelectedNode({
+                  ...selectedNode,
+                  metadata: {
+                    ...metadata!,
+                    content: root.content.toString(),
+                  },
+                })
+              )
+            })
           })
         }
       }
@@ -156,7 +173,6 @@ const CodeEditor = ({
 
   useEffect(() => {
     initializeYorkieEditor()
-    console.log('useEffect')
 
     // Cleanup function to destroy the editor when the component unmounts
     return () => {

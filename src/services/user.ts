@@ -76,7 +76,7 @@ export async function logout(): Promise<ApiResponse<loginResponse>> {
 /** 유저 로그인 확인 API */
 export async function checkLoginStatus(): Promise<ApiResponse<loginResponse>> {
   try {
-    const response: AxiosResponse = await API.post(`/api/auth/status`)
+    const response: AxiosResponse = await API.get(`/api/auth/status`)
 
     return {
       success: true,

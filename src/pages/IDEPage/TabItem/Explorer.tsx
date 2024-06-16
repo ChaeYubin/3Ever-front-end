@@ -135,11 +135,12 @@ const Explorer = ({ containerId }: { containerId: string | undefined }) => {
 
   // ** 엔트리 생성 요청 핸들러 */
   const handleCreateEntry = async () => {
-    const isDirectory = selectedNode.metadata?.isDirectory!
+    // TODO - 수정
+    const isDirectory = newEntryType === 'directory'
 
     const response = await createEntry(
       containerId!,
-      selectedNode.parent || 1,
+      selectedNode.parent === null ? 1 : selectedNode.parent,
       newEntryName,
       isDirectory
     )
@@ -282,8 +283,8 @@ const Explorer = ({ containerId }: { containerId: string | undefined }) => {
           data={tree!}
           aria-label="directory tree"
           onNodeSelect={onNodeSelect}
-          defaultExpandedIds={[2]}
-          defaultSelectedIds={[3]}
+          defaultExpandedIds={[1]}
+          defaultSelectedIds={[2]}
           nodeRenderer={({
             element,
             isBranch,

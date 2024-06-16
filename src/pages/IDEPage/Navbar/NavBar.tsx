@@ -37,7 +37,7 @@ const NavBar = ({ containerId }: { containerId: string | undefined }) => {
     if (response.success) {
       toast({
         title: '파일이 저장되었습니다.',
-        position: 'top',
+        position: 'top-right',
         isClosable: true,
         colorScheme: 'green',
         status: 'success',

@@ -50,10 +50,11 @@ const IDEPage = () => {
       setIsLoading(true) // 로딩 시작
 
       try {
-        const response = await startContainer(Number(containerId))
+        const response = await await startContainer(Number(containerId))
 
         if (!isCancelled && response.success) {
           const tree = flattenTree<nodeMetadata>(response.data!)
+          console.log(tree)
           dispatch(setTree(tree as Tree))
         } else {
           console.log('Error fetching file system entries', response.error)

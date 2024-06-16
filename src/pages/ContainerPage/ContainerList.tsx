@@ -29,16 +29,16 @@ const ContainerList = ({ category }: Props) => {
 
   useEffect(() => {
     const CATEGORY: { [key: string]: string } = {
-      '내 컨테이너': 'my',
-      '강의 컨테이너': 'lecture',
-      '질문 컨테이너': 'question',
+      '내 컨테이너': 'MY',
+      '강의 컨테이너': 'LECTURE',
+      '질문 컨테이너': 'QUESTION',
     }
 
     const getContainerList = async () => {
       const response = await getContainer(CATEGORY[category])
 
       if (response.success) {
-        setContainerList(response.data || [])
+        setContainerList(response.data?.result || [])
       } else {
         console.error('Error fetching containers:', response.error)
       }
@@ -140,7 +140,7 @@ const ContainerList = ({ category }: Props) => {
             templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
           >
             {category === '내 컨테이너'
-              ? containerList!.map(container => (
+              ? containerList?.map(container => (
                   <ContainerItem
                     key={container.id}
                     category={category}
@@ -150,7 +150,7 @@ const ContainerList = ({ category }: Props) => {
                     description={container.description}
                   />
                 ))
-              : containerList!.map(container => (
+              : containerList?.map(container => (
                   <ContainerItem
                     key={container.id}
                     category={category}

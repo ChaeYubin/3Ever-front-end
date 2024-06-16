@@ -11,8 +11,8 @@ export async function saveFile(
 ): Promise<ApiResponse<{ content: string }>> {
   try {
     const response: AxiosResponse = await API.put(
-      `/api/workspaces/${containerId}/files/${fileId}`,
-      content
+      `/api/workspaces/${containerId}/entries/${fileId}`,
+      { content: content }
     )
 
     return {
@@ -30,14 +30,14 @@ export async function saveFile(
 
 /** 파일 실행 API */
 export async function executeFile(
-  language: string,
+  extension: string,
   code: string
 ): Promise<ApiResponse<{ result: string }>> {
   try {
     const response: AxiosResponse = await API.post(
       `/api/workspaces/entries/execute`,
       {
-        language: language,
+        extension: `.${extension}`,
         code: code,
       }
     )

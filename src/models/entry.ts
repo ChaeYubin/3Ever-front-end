@@ -10,7 +10,7 @@ export interface Entry {
 
 export type nodeMetadata = {
   isDirectory: boolean
-  content: string
+  content: string | null
 }
 
 export type TreeNode = INode<nodeMetadata>
