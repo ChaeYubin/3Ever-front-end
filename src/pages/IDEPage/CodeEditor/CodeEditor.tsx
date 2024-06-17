@@ -14,7 +14,6 @@ import { showMinimap } from '@replit/codemirror-minimap'
 import yorkie, { type Text } from 'yorkie-js-sdk'
 import { useAppDispatch, useAppSelector } from '@/hooks'
 import { selectCurrentFile, setCurrentFile } from '@/store/ideSlice'
-import yorkieClient from '@/services/yorkie'
 
 type YorkieDoc = {
   content: Text
@@ -42,11 +41,11 @@ const CodeEditor = ({
 
   const initializeYorkieEditor = useCallback(async () => {
     // 1. 클라이언트 생성 및 활성화
-    // const client = new yorkie.Client('https://api.yorkie.dev', {
-    //   apiKey: import.meta.env.VITE_YORKIE_API_KEY,
-    // })
+    const client = new yorkie.Client('https://api.yorkie.dev', {
+      apiKey: import.meta.env.VITE_YORKIE_API_KEY,
+    })
 
-    await yorkieClient.activate()
+    await client.activate()
 
     // 2. 클라이언트와 연결된 문서 생성
     const doc = new yorkie.Document<YorkieDoc>(
@@ -59,7 +58,7 @@ const CodeEditor = ({
       }
     )
 
-    await yorkieClient.attach(doc, {})
+    await client.attach(doc, {})
 
     // 3. 해당 키의 문서에 content가 없으면 새로운 Text 생성
     doc.update(root => {
@@ -102,7 +101,7 @@ const CodeEditor = ({
       }
     })
 
-    await yorkieClient.sync()
+    await client.sync()
 
     // 5. local의 변경 사항을 remote에 broadcast하기 위한 함수
     const updateListener = EditorView.updateListener.of(viewUpdate => {
@@ -120,7 +119,7 @@ const CodeEditor = ({
             const insertText = inserted.toJSON().join('\n')
             doc.update(root => {
               root.content.edit(fromA + adj, toA + adj, insertText)
-            }, `update content byA ${yorkieClient.getID()}`)
+            }, `update content byA ${client.getID()}`)
             adj += insertText.length - (toA - fromA)
 
             doc.update(root => {

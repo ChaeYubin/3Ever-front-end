@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/hooks'
 import { TreeNode } from '@/models/entry'
-import yorkieClient from '@/services/yorkie'
 import { selectTree, setTree } from '@/store/ideSlice'
 import { useCallback, useEffect, useRef } from 'react'
 import yorkie, { Document, Indexable, JSONArray } from 'yorkie-js-sdk'
@@ -20,11 +19,11 @@ const ExplorerState = ({
 
   const initializeYorkieEditor = useCallback(async () => {
     // // 1. 클라이언트 생성 및 활성화
-    // const client = new yorkie.Client('https://api.yorkie.dev', {
-    //   apiKey: import.meta.env.VITE_YORKIE_API_KEY,
-    // })
+    const client = new yorkie.Client('https://api.yorkie.dev', {
+      apiKey: import.meta.env.VITE_YORKIE_API_KEY,
+    })
 
-    await yorkieClient.activate()
+    await client.activate()
 
     // 2. 클라이언트와 연결된 문서 생성
     const doc = new yorkie.Document<FileTreeDoc>(
@@ -39,7 +38,7 @@ const ExplorerState = ({
 
     yorkieDocRef.current = doc
 
-    await yorkieClient.attach(doc, {})
+    await client.attach(doc, {})
 
     // 3. 해당 키의 문서에 content가 없으면 새로운 Text 생성
     doc.update(root => {
@@ -66,7 +65,7 @@ const ExplorerState = ({
       }
     })
 
-    await yorkieClient.sync()
+    await client.sync()
 
     syncFileTree()
   }, [containerId])
