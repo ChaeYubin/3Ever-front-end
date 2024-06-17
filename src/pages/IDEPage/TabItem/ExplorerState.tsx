@@ -1,11 +1,13 @@
 import { useAppDispatch, useAppSelector } from '@/hooks'
 import { TreeNode } from '@/models/entry'
 import { selectTree, setTree } from '@/store/ideSlice'
+import { selectId, selectNickname } from '@/store/userSlice'
 import { useCallback, useEffect, useRef } from 'react'
-import yorkie, { Document, Indexable, JSONArray } from 'yorkie-js-sdk'
+import yorkie, { Client, Document, Indexable, JSONArray } from 'yorkie-js-sdk'
 
-type FileTreeDoc = {
+type containerDoc = {
   tree: JSONArray<TreeNode>
+  users: { [key: string]: string }
 }
 
 const ExplorerState = ({
@@ -15,18 +17,23 @@ const ExplorerState = ({
 }) => {
   const tree = useAppSelector(selectTree)
   const dispatch = useAppDispatch()
-  const yorkieDocRef = useRef<Document<FileTreeDoc, Indexable>>()
+  const yorkieClientRef = useRef<Client>()
+  const yorkieDocRef = useRef<Document<containerDoc, Indexable>>()
 
-  const initializeYorkieEditor = useCallback(async () => {
+  const userId = useAppSelector(selectId)
+  const userNickname = useAppSelector(selectNickname)
+
+  const initializeYorkieExplorer = useCallback(async () => {
     // // 1. 클라이언트 생성 및 활성화
     const client = new yorkie.Client('https://api.yorkie.dev', {
       apiKey: import.meta.env.VITE_YORKIE_API_KEY,
     })
 
     await client.activate()
+    yorkieClientRef.current = client
 
     // 2. 클라이언트와 연결된 문서 생성
-    const doc = new yorkie.Document<FileTreeDoc>(
+    const doc = new yorkie.Document<containerDoc>(
       `FileTree-${containerId}-${new Date()
         .toISOString()
         .substring(0, 10)
@@ -38,10 +45,12 @@ const ExplorerState = ({
 
     yorkieDocRef.current = doc
 
-    await client.attach(doc, {})
+    await client.attach(doc, {
+      initialPresence: { username: userNickname },
+    })
 
-    // 3. 해당 키의 문서에 content가 없으면 새로운 Text 생성
     doc.update(root => {
+      // 해당 키의 문서에 content가 없으면 새로운 Text 생성
       if (!root.tree) {
         root.tree = []
 
@@ -50,6 +59,14 @@ const ExplorerState = ({
           root.tree.push(treeNode)
         }
       }
+
+      // 해당 키의 문서에 user가 없으면 초기값 할당
+      if (!root.users) {
+        root.users = {}
+      }
+
+      // TODO - 현재 유저가 이 컨테이너의 생성자가 아닐 경우 viewer 권한 부여
+      root.users[userId] = 'admin'
     }, 'create content if not exists')
 
     // 4. 문서의 변경 이벤트 구독
@@ -65,13 +82,23 @@ const ExplorerState = ({
       }
     })
 
+    doc.subscribe('presence', event => {
+      const users = doc.getPresences()
+      console.log(users)
+    })
+
     await client.sync()
 
     syncFileTree()
   }, [containerId])
 
   useEffect(() => {
-    initializeYorkieEditor()
+    initializeYorkieExplorer()
+
+    return () => {
+      if (yorkieClientRef.current && yorkieDocRef.current)
+        yorkieClientRef.current.detach(yorkieDocRef.current)
+    }
   }, [containerId])
 
   // local 조작에 의해 tree 상태가 바뀌면 remote 문서를 update
